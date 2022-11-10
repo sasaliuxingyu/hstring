@@ -13,7 +13,7 @@ void hstring::copyStringLength(char* target, const char* source)
 	unsigned short length{ getStringLength(source) };
 	if (length > recordStringMemorysize) {
 		//有严重的内存泄露问题
-		delete[] stringContent;//为什么需要删除内存？
+		delete[] stringContent;//为什么需要删除内存？不删除会发生什么？我的stringContent内容远超我所设定的内存空间会发生什么？空指针？还是指针悬挂？
 		stringContent = new char[length];
 		recordStringMemorysize = length;
 	}
@@ -40,25 +40,36 @@ hstring::hstring(const hstring& string) :hstring()
 {
 	copyStringLength(stringContent, string.stringContent);
 }
+hstring::hstring(const int* string) :hstring()
+{
+	//copyStringLength(stringContent, stringContent);212312312312313254654
+}
 hstring& hstring::operator=(const hstring& string)
 {
 	copyStringLength(stringContent, string.stringContent);
 	return (*this);//return *this返回的是当前对象的克隆或者本身（若返回类型为A， 则是克隆， 若返回类型为A&， 则是本身 ）。return this返回当前对象的地址（指向当前对象的指针）
 }
 
+hstring& hstring::operator=(const int& string)
+{
+	
+	copyStringLength(stringContent, string);//2312132564648
+	return (*this);
+}
+
 hstring& hstring::operator<<(const hstring& string)
 {
-	unsigned short length = getStringLength(string.stringContent);
-	length = unsignedStringLength + length - 1;
+	unsigned short length = getStringLength(string.stringContent);//获取输入的长度
+	length = unsignedStringLength + length - 1;//加工原来字符串+输入字符串的长度
 	if (unsignedStringLength + length - 1 > recordStringMemorysize) {
-		char* stringContentCopy = stringContent;
-		stringContent = new char[length];
-		recordStringMemorysize = length;
+		char* stringContentCopy = stringContent;//备份原字符串内容
+		stringContent = new char[length];//开辟加工后字符串的内存空间
+		recordStringMemorysize = length;//更新缓冲区内存大小
 		delete[] stringContentCopy;
-	}
-	memcpy(stringContent+unsignedStringLength-1, string.stringContent, length-unsignedStringLength+1);
+	}//如果内存大小大于缓冲区
+	memcpy(stringContent+unsignedStringLength-1, string.stringContent, length-unsignedStringLength+1);//字符串开始的位置+长度开始复制内存，长度重新解为输入字符串的长度
 	//void* mymemcpy(void* dest, const void* src, size_t n);这里该有的是memcpy的手动实现函数使用
-	unsignedStringLength = length;//字符串长度重置
+	unsignedStringLength = length;//原有字符串长度重置为新字符串长度
 	return *this;
 }
 

@@ -16,9 +16,11 @@ public:
 	~hstring();
 	hstring();
 	hstring(const char* string);//利用字符串构造
-	hstring(const hstring& string);//利用类构造
+	hstring(const hstring& string);
+	hstring(const int* string);
+	//利用类构造
 	hstring& operator=(const hstring& string);//实现将一个类的实例等于另一个类的实例
-	//hstring& operator=(const int& string);这两段是赋值运算符的作业，待完成
+	hstring& operator=(const int& string);//这两段是赋值运算符的作业，待完成
 	//hstring& operator=(const long long& string);
 	//hstring& operator=(const float string);
 	//bool resetMemcory(unsigned short);//重置缓冲区大小
